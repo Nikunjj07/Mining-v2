@@ -1,6 +1,7 @@
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
+import NotificationBell from './NotificationBell';
 
 interface NavbarProps {
     title?: string;
@@ -47,6 +48,9 @@ export default function Navbar({ title = 'Disaster Management' }: NavbarProps) {
                             </svg>
                         )}
                     </button>
+
+                    {/* Notification Bell */}
+                    {user && <NotificationBell />}
 
                     {user && (
                         <>

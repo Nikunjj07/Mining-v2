@@ -1,7 +1,8 @@
-import { useState, type FormEvent } from 'react';
+import { useState, type FormEvent, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import { createEmergency } from '../../../services/emergency.service';
+import { useGeolocation } from '../../../hooks/useGeolocation';
 import { DashboardLayout } from '../../../components/ui';
 
 type EmergencyType = 'gas_leak' | 'fire' | 'collapse' | 'equipment_failure' | 'worker_trapped' | 'ventilation_failure';
@@ -10,14 +11,29 @@ type Severity = 'low' | 'medium' | 'high';
 export default function EmergencyCreate() {
     const { user } = useAuth();
     const navigate = useNavigate();
+    const { location: geoLocation, error: geoError } = useGeolocation();
 
     const [type, setType] = useState<EmergencyType>('gas_leak');
     const [severity, setSeverity] = useState<Severity>('medium');
     const [location, setLocation] = useState('');
     const [description, setDescription] = useState('');
+    const [latitude, setLatitude] = useState<number | null>(null);
+    const [longitude, setLongitude] = useState<number | null>(null);
+    const [useCurrentLocation, setUseCurrentLocation] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
+
+    // Auto-fill coordinates when using current location
+    useEffect(() => {
+        if (useCurrentLocation && geoLocation) {
+            setLatitude(geoLocation.coords.latitude);
+            setLongitude(geoLocation.coords.longitude);
+        } else if (!useCurrentLocation) {
+            setLatitude(null);
+            setLongitude(null);
+        }
+    }, [useCurrentLocation, geoLocation]);
 
     const emergencyTypes = [
         { value: 'gas_leak', label: 'Gas Leak' },
@@ -59,6 +75,8 @@ export default function EmergencyCreate() {
                 description: description.trim(),
                 reported_by: user?.id,
                 status: 'active',
+                latitude,
+                longitude
             });
 
             setSuccess('Emergency reported successfully! Notifying rescue teams...');
@@ -152,6 +170,32 @@ export default function EmergencyCreate() {
                             placeholder="e.g., Section A, Level 3, Near Equipment Room"
                             required
                         />
+
+                        {/* Geolocation Toggle */}
+                        <div className="mt-3 flex items-center gap-2">
+                            <input
+                                type="checkbox"
+                                id="useLocation"
+                                checked={useCurrentLocation}
+                                onChange={(e) => setUseCurrentLocation(e.target.checked)}
+                                className="w-4 h-4 text-primary bg-input border-border rounded focus:ring-primary"
+                            />
+                            <label htmlFor="useLocation" className="text-sm text-foreground cursor-pointer">
+                                📍 Use my current location
+                            </label>
+                        </div>
+
+                        {useCurrentLocation && geoLocation && (
+                            <p className="text-xs text-green-600 dark:text-green-400 mt-2">
+                                ✓ Coordinates: {geoLocation.coords.latitude.toFixed(6)}, {geoLocation.coords.longitude.toFixed(6)}
+                            </p>
+                        )}
+
+                        {useCurrentLocation && geoError && (
+                            <p className="text-xs text-destructive mt-2">
+                                ⚠️ {geoError}
+                            </p>
+                        )}
                     </div>
 
                     {/* Description */}
@@ -193,8 +237,8 @@ export default function EmergencyCreate() {
                             type="submit"
                             disabled={loading}
                             className={`flex-1 py-3 rounded-md font-semibold transition-opacity disabled:opacity-50 ${severity === 'high'
-                                    ? 'bg-destructive text-destructive-foreground hover:opacity-90'
-                                    : 'bg-primary text-primary-foreground hover:opacity-90'
+                                ? 'bg-destructive text-destructive-foreground hover:opacity-90'
+                                : 'bg-primary text-primary-foreground hover:opacity-90'
                                 }`}
                         >
                             {loading ? 'Reporting Emergency...' : severity === 'high' ? '🚨 Report Critical Emergency' : 'Report Emergency'}

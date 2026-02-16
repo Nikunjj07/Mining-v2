@@ -29,6 +29,8 @@ export interface Emergency {
     severity: 'low' | 'medium' | 'high';
     location?: string;
     description?: string;
+    latitude?: number | null;
+    longitude?: number | null;
     status: 'active' | 'in_progress' | 'resolved';
     reported_by: string;
     assigned_to?: string;
