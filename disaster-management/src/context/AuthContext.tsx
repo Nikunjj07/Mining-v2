@@ -5,7 +5,7 @@ import type { User } from '../types/database.types';
 interface AuthContextType {
     user: User | null;
     loading: boolean;
-    signIn: (email: string, password: string) => Promise<void>;
+    signIn: (email: string, password: string) => Promise<User | null>;
     signInWithGoogle: () => Promise<void>;
     signOut: () => Promise<void>;
 }
@@ -71,11 +71,25 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     };
 
     const signIn = async (email: string, password: string) => {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
             email,
             password,
         });
         if (error) throw error;
+
+        // Fetch and return user profile immediately
+        if (data.user) {
+            const { data: userData, error: userError } = await supabase
+                .from('users')
+                .select('*')
+                .eq('id', data.user.id)
+                .single();
+
+            if (userError) throw userError;
+            setUser(userData);
+            return userData;
+        }
+        return null;
     };
 
     const signInWithGoogle = async () => {

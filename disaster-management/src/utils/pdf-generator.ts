@@ -1,0 +1,163 @@
+import jsPDF from 'jspdf';
+
+interface ShiftLog {
+    id: string;
+    shift: 'morning' | 'evening' | 'night';
+    production_summary: string;
+    equipment_status: string;
+    safety_issues: string | null;
+    red_flag: boolean;
+    next_shift_instructions: string | null;
+    acknowledged: boolean;
+    created_at: string;
+    supervisor?: {
+        id: string;
+        full_name: string;
+        email: string;
+    };
+}
+
+export const generateShiftReport = (shift: ShiftLog) => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    let yPosition = 20;
+
+    // Helper function to add text with word wrap
+    const addText = (text: string, x: number, y: number, maxWidth: number, fontSize: number = 12) => {
+        doc.setFontSize(fontSize);
+        const lines = doc.splitTextToSize(text, maxWidth);
+        doc.text(lines, x, y);
+        return y + (lines.length * fontSize * 0.4); // Return new Y position
+    };
+
+    // Header
+    doc.setFontSize(20);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Shift Log Report', pageWidth / 2, yPosition, { align: 'center' });
+    yPosition += 15;
+
+    // Horizontal line
+    doc.setLineWidth(0.5);
+    doc.line(20, yPosition, pageWidth - 20, yPosition);
+    yPosition += 10;
+
+    // Shift Information
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Shift Information', 20, yPosition);
+    yPosition += 8;
+
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+
+    // Shift Type
+    const shiftType = shift.shift.charAt(0).toUpperCase() + shift.shift.slice(1);
+    doc.text(`Shift Type: ${shiftType}`, 20, yPosition);
+    yPosition += 6;
+
+    // Timestamp
+    const timestamp = new Date(shift.created_at).toLocaleString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+    doc.text(`Date & Time: ${timestamp}`, 20, yPosition);
+    yPosition += 6;
+
+    // Supervisor
+    if (shift.supervisor) {
+        doc.text(`Supervisor: ${shift.supervisor.full_name}`, 20, yPosition);
+        yPosition += 6;
+        doc.text(`Email: ${shift.supervisor.email}`, 20, yPosition);
+        yPosition += 6;
+    }
+
+    // Red Flag Status
+    if (shift.red_flag) {
+        doc.setTextColor(220, 38, 38); // Red color
+        doc.setFont('helvetica', 'bold');
+        doc.text('⚠ RED FLAG - CRITICAL ISSUES REPORTED', 20, yPosition);
+        doc.setTextColor(0, 0, 0); // Reset to black
+        doc.setFont('helvetica', 'normal');
+        yPosition += 8;
+    } else {
+        yPosition += 2;
+    }
+
+    // Acknowledged Status
+    if (shift.acknowledged) {
+        doc.setTextColor(34, 197, 94); // Green color
+        doc.text('✓ Acknowledged', 20, yPosition);
+        doc.setTextColor(0, 0, 0); // Reset to black
+    } else {
+        doc.setTextColor(234, 179, 8); // Yellow/Orange color
+        doc.text('⏳ Pending Acknowledgement', 20, yPosition);
+        doc.setTextColor(0, 0, 0); // Reset to black
+    }
+    yPosition += 10;
+
+    // Production Summary
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Production Summary', 20, yPosition);
+    yPosition += 8;
+
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    yPosition = addText(shift.production_summary, 20, yPosition, pageWidth - 40, 11);
+    yPosition += 8;
+
+    // Equipment Status
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Equipment Status', 20, yPosition);
+    yPosition += 8;
+
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    yPosition = addText(shift.equipment_status, 20, yPosition, pageWidth - 40, 11);
+    yPosition += 8;
+
+    // Safety Issues (if any)
+    if (shift.safety_issues && shift.safety_issues.trim()) {
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(220, 38, 38); // Red color for safety issues
+        doc.text('⚠ Safety Issues', 20, yPosition);
+        doc.setTextColor(0, 0, 0); // Reset to black
+        yPosition += 8;
+
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'normal');
+        yPosition = addText(shift.safety_issues, 20, yPosition, pageWidth - 40, 11);
+        yPosition += 8;
+    }
+
+    // Next Shift Instructions (if any)
+    if (shift.next_shift_instructions && shift.next_shift_instructions.trim()) {
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Next Shift Instructions', 20, yPosition);
+        yPosition += 8;
+
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'normal');
+        yPosition = addText(shift.next_shift_instructions, 20, yPosition, pageWidth - 40, 11);
+        yPosition += 8;
+    }
+
+    // Footer
+    yPosition = doc.internal.pageSize.getHeight() - 20;
+    doc.setFontSize(9);
+    doc.setTextColor(128, 128, 128); // Gray color
+    doc.text('Generated by Disaster Management System', pageWidth / 2, yPosition, { align: 'center' });
+    doc.text(`Report ID: ${shift.id.substring(0, 8)}`, pageWidth / 2, yPosition + 5, { align: 'center' });
+
+    // Generate filename
+    const filename = `shift-report-${shiftType.toLowerCase()}-${new Date(shift.created_at).toISOString().split('T')[0]}.pdf`;
+
+    // Save the PDF
+    doc.save(filename);
+};

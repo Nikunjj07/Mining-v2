@@ -17,7 +17,10 @@ export const createShiftLog = async (shiftData: Partial<ShiftLog>) => {
 export const getShiftLogs = async () => {
     const { data, error } = await supabase
         .from('shift_logs')
-        .select('*')
+        .select(`
+            *,
+            supervisor:users!shift_logs_supervisor_id_fkey(id, full_name, email)
+        `)
         .order('created_at', { ascending: false });
 
     if (error) throw error;
@@ -25,9 +28,18 @@ export const getShiftLogs = async () => {
 };
 
 export const acknowledgeShift = async (shiftLogId: string, userId: string) => {
-    const { data, error } = await supabase
+    // Create acknowledgement record
+    const { error: ackError } = await supabase
         .from('shift_acknowledgements')
-        .insert([{ shift_log_id: shiftLogId, acknowledged_by: userId }])
+        .insert([{ shift_log_id: shiftLogId, acknowledged_by: userId }]);
+
+    if (ackError) throw ackError;
+
+    // Update shift log to mark as acknowledged
+    const { data, error } = await supabase
+        .from('shift_logs')
+        .update({ acknowledged: true })
+        .eq('id', shiftLogId)
         .select();
 
     if (error) throw error;
@@ -39,7 +51,7 @@ export const getRecentShifts = async (limit: number = 10) => {
         .from('shift_logs')
         .select(`
             *,
-            supervisor:users!supervisor_id(id, full_name, email)
+            supervisor:users!shift_logs_supervisor_id_fkey(id, full_name, email)
         `)
         .order('created_at', { ascending: false })
         .limit(limit);

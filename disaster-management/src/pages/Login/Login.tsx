@@ -1,7 +1,9 @@
 import { useState, type FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 export default function Login() {
+    const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -14,8 +16,15 @@ export default function Login() {
         setLoading(true);
 
         try {
-            await signIn(email, password);
-            // Navigation will be handled by the auth state change
+            const user = await signIn(email, password);
+            // Redirect based on user role
+            if (user?.role === 'admin') {
+                navigate('/dashboard/admin');
+            } else if (user?.role === 'rescue') {
+                navigate('/dashboard/rescue');
+            } else {
+                navigate('/dashboard/supervisor');
+            }
         } catch (err) {
             setError('Invalid email or password');
             console.error(err);
@@ -29,6 +38,7 @@ export default function Login() {
         setLoading(true);
         try {
             await signInWithGoogle();
+            // Navigation will be handled by auth state change
         } catch (err) {
             setError('Failed to sign in with Google');
             console.error(err);
@@ -118,8 +128,6 @@ export default function Login() {
                 </form>
 
                 <div className="mt-6 text-center text-sm text-muted-foreground">
-                    <p>Demo accounts:</p>
-                    <p className="mt-1">admin@mine.com • supervisor@mine.com</p>
                     <p className="mt-4">
                         Don't have an account?{' '}
                         <a href="/signup" className="text-primary hover:underline font-medium">

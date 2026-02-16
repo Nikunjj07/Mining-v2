@@ -43,3 +43,25 @@ export const deleteHazard = async (hazardId: string) => {
 
     if (error) throw error;
 };
+
+export const getHazardById = async (id: string) => {
+    const { data, error } = await supabase
+        .from('hazards')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+    if (error) throw error;
+    return data;
+};
+
+export const getHazardsByRiskLevel = async (riskLevel: 'low' | 'medium' | 'high') => {
+    const { data, error } = await supabase
+        .from('hazards')
+        .select('*')
+        .eq('risk_level', riskLevel)
+        .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data;
+};

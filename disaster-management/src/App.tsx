@@ -9,6 +9,9 @@ import SupervisorDashboard from './pages/Dashboard/Supervisor/SupervisorDashboar
 import RescueDashboard from './pages/Dashboard/Rescue/RescueDashboard';
 import ShiftCreate from './pages/Shift/Create/ShiftCreate';
 import ShiftHistory from './pages/Shift/History/ShiftHistory';
+import EmergencyCreate from './pages/Emergency/Create/EmergencyCreate';
+import EmergencyManage from './pages/Emergency/Manage/EmergencyManage';
+import HazardManage from './pages/Hazards/Manage/HazardManage';
 import Unauthorized from './pages/Unauthorized';
 import './App.css';
 
@@ -104,6 +107,34 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['rescue']}>
                   <RescueDashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Emergency Routes */}
+            <Route
+              path="/emergency/create"
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'supervisor', 'worker', 'rescue']}>
+                  <EmergencyCreate />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/emergency/manage"
+              element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <EmergencyManage />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Hazard Routes */}
+            <Route
+              path="/hazards"
+              element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <HazardManage />
                 </ProtectedRoute>
               }
             />
