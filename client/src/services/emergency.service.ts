@@ -20,8 +20,10 @@ export interface CreateEmergencyData {
     severity: Emergency['severity'];
     location?: string;
     description?: string;
-    latitude?: number;
-    longitude?: number;
+    latitude?: number | null;
+    longitude?: number | null;
+    reported_by?: string;
+    status?: Emergency['status'];
 }
 
 export const createEmergency = async (emergencyData: CreateEmergencyData): Promise<Emergency> => {
@@ -34,9 +36,9 @@ export const getEmergencies = async (params?: {
     status?: Emergency['status'];
     page?: number;
     limit?: number;
-}): Promise<{ emergencies: EmergencyWithRelations[]; total: number; pages: number }> => {
+}): Promise<EmergencyWithRelations[]> => {
     const response = await apiClient.get('/emergencies', { params });
-    return response.data;
+    return response.data.emergencies;
 };
 
 export const getEmergencyById = async (emergencyId: string): Promise<EmergencyWithRelations> => {
@@ -57,7 +59,7 @@ export const assignRescueTeam = async (emergencyId: string, userId: string): Pro
     return response.data.emergency;
 };
 
-export const getAssignedEmergencies = async (): Promise<EmergencyWithRelations[]> => {
+export const getAssignedEmergencies = async (_userId?: string): Promise<EmergencyWithRelations[]> => {
     const response = await apiClient.get('/emergencies/assigned');
     return response.data.emergencies;
 };

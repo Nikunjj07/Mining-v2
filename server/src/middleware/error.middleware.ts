@@ -9,7 +9,7 @@ export interface AppError extends Error {
 
 export const errorHandler = (
   err: AppError | ZodError | Error,
-  _req: Request,
+  req: Request,
   res: Response,
   _next: NextFunction
 ): void => {
@@ -62,11 +62,15 @@ export const errorHandler = (
 
   // Log error for debugging
   if (statusCode === 500) {
-    console.error('Internal Server Error:', err);
+    console.error('Internal Server Error:', {
+      requestId: req.requestId,
+      error: err
+    });
   }
 
   res.status(statusCode).json({
     error: message,
+    requestId: req.requestId,
     ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
   });
 };

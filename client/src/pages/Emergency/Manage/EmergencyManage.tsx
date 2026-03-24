@@ -54,7 +54,7 @@ export default function EmergencyManage() {
 
             // Fetch emergencies
             const emergencyResponse = await getEmergencies();
-            setEmergencies(emergencyResponse.emergencies as Emergency[]);
+            setEmergencies(emergencyResponse as Emergency[]);
 
             // Fetch rescue team members
             try {

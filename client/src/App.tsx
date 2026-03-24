@@ -148,7 +148,7 @@ function App() {
 
               {/* Hazard Routes */}
               <Route
-                path="/hazards"
+                path="/hazards/manage"
                 element={
                   <ProtectedRoute allowedRoles={['admin']}>
                     <HazardManage />

@@ -11,6 +11,7 @@ export interface ShiftLogWithRelations extends ShiftLog {
 }
 
 export interface CreateShiftLogData {
+    created_by?: string;
     shift: ShiftLog['shift'];
     production_summary?: string;
     equipment_status?: string;
@@ -29,12 +30,12 @@ export const getShiftLogs = async (params?: {
     red_flag?: boolean;
     page?: number;
     limit?: number;
-}): Promise<{ shiftLogs: ShiftLogWithRelations[]; total: number; pages: number }> => {
+}): Promise<ShiftLogWithRelations[]> => {
     const response = await apiClient.get('/shifts', { params });
-    return response.data;
+    return response.data.shift_logs;
 };
 
-export const acknowledgeShift = async (shiftLogId: string): Promise<void> => {
+export const acknowledgeShift = async (shiftLogId: string, _userId?: string): Promise<void> => {
     await apiClient.post(`/shifts/${shiftLogId}/acknowledge`);
 };
 

@@ -44,7 +44,7 @@ export const RealtimeProvider = ({ children }: RealtimeProviderProps) => {
         if (!user?.id) return;
 
         try {
-            const { notifications } = await getNotifications({ limit: 1 });
+            const notifications = await getNotifications({ limit: 1 });
             if (notifications.length > 0) {
                 const latestNotification = notifications[0];
 

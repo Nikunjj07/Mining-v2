@@ -16,9 +16,10 @@ export interface Notification {
 export const getNotifications = async (params?: {
     page?: number;
     limit?: number;
-}): Promise<{ notifications: Notification[]; total: number; pages: number }> => {
-    const response = await apiClient.get('/notifications', { params });
-    return response.data;
+} | string): Promise<Notification[]> => {
+    const normalizedParams = typeof params === 'string' ? undefined : params;
+    const response = await apiClient.get('/notifications', { params: normalizedParams });
+    return response.data.notifications;
 };
 
 export const getUnreadCount = async (): Promise<number> => {
@@ -30,6 +31,6 @@ export const markAsRead = async (notificationId: string): Promise<void> => {
     await apiClient.patch(`/notifications/${notificationId}/read`);
 };
 
-export const markAllAsRead = async (): Promise<void> => {
+export const markAllAsRead = async (_userId?: string): Promise<void> => {
     await apiClient.patch('/notifications/mark-all-read');
 };

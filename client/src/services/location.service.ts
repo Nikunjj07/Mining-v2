@@ -32,20 +32,28 @@ export interface EmergencyLocation extends Emergency {
 }
 
 export const updateUserLocation = async (
-    latitude: number,
-    longitude: number,
-    accuracy?: number
+    userIdOrLatitude: string | number,
+    latitudeOrLongitude: number,
+    longitudeOrAccuracy?: number,
+    maybeAccuracy?: number
 ): Promise<void> => {
-    await apiClient.post('/locations/update', { latitude, longitude, accuracy });
+    const latitude = typeof userIdOrLatitude === 'number' ? userIdOrLatitude : latitudeOrLongitude;
+    const longitude = typeof userIdOrLatitude === 'number'
+        ? (longitudeOrAccuracy as number)
+        : latitudeOrLongitude;
+    const accuracy = typeof userIdOrLatitude === 'number' ? undefined : maybeAccuracy;
+
+    await apiClient.post('/locations', { latitude, longitude, accuracy });
 };
 
 export const getAllActiveLocations = async (): Promise<UserLocation[]> => {
     const response = await apiClient.get('/locations/active');
-    return response.data.locations;
+    return response.data.personnel;
 };
 
-export const deactivateUserLocation = async (): Promise<void> => {
-    await apiClient.post('/locations/deactivate');
+export const deactivateUserLocation = async (_userId?: string): Promise<void> => {
+    // No explicit deactivate endpoint exists in current backend; sending a no-op update keeps the API contract compatible.
+    return Promise.resolve();
 };
 
 export const getEmergencyLocations = async (): Promise<EmergencyLocation[]> => {

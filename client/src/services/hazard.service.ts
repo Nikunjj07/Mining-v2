@@ -22,13 +22,13 @@ export const getHazards = async (params?: {
     status?: string;
     page?: number;
     limit?: number;
-}): Promise<{ hazards: Hazard[]; total: number; pages: number }> => {
+}): Promise<Hazard[]> => {
     const response = await apiClient.get('/hazards', { params });
-    return response.data;
+    return response.data.hazards;
 };
 
 export const updateHazard = async (hazardId: string, hazardData: Partial<CreateHazardData>): Promise<Hazard> => {
-    const response = await apiClient.put(`/hazards/${hazardId}`, hazardData);
+    const response = await apiClient.patch(`/hazards/${hazardId}`, hazardData);
     return response.data.hazard;
 };
 

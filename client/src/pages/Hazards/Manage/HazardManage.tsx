@@ -4,7 +4,7 @@ import { DashboardLayout, StatusBadge } from '../../../components/ui';
 
 interface Hazard {
     id: string;
-    name: string;
+    hazard_name: string;
     description: string;
     risk_level: 'low' | 'medium' | 'high';
     control_measure: string;
@@ -24,7 +24,7 @@ export default function HazardManage() {
 
     // Form state
     const [formData, setFormData] = useState({
-        name: '',
+        hazard_name: '',
         description: '',
         risk_level: 'medium' as 'low' | 'medium' | 'high',
         control_measure: '',
@@ -76,7 +76,7 @@ export default function HazardManage() {
     const handleEdit = (hazard: Hazard) => {
         setEditingHazard(hazard);
         setFormData({
-            name: hazard.name,
+            hazard_name: hazard.hazard_name,
             description: hazard.description,
             risk_level: hazard.risk_level,
             control_measure: hazard.control_measure,
@@ -102,7 +102,7 @@ export default function HazardManage() {
 
     const resetForm = () => {
         setFormData({
-            name: '',
+            hazard_name: '',
             description: '',
             risk_level: 'medium',
             control_measure: '',
@@ -191,14 +191,14 @@ export default function HazardManage() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {/* Hazard Name */}
                                 <div>
-                                    <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
+                                    <label htmlFor="hazard_name" className="block text-sm font-medium text-foreground mb-2">
                                         Hazard Name <span className="text-destructive">*</span>
                                     </label>
                                     <input
                                         type="text"
-                                        id="name"
-                                        value={formData.name}
-                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                        id="hazard_name"
+                                        value={formData.hazard_name}
+                                        onChange={(e) => setFormData({ ...formData, hazard_name: e.target.value })}
                                         className="w-full px-4 py-2 bg-input border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
                                         placeholder="e.g., Slippery Floor"
                                         required
@@ -344,7 +344,7 @@ export default function HazardManage() {
                                 {/* Header */}
                                 <div className="flex items-start justify-between mb-3">
                                     <div className="flex-1">
-                                        <h3 className="text-lg font-semibold text-foreground mb-2">{hazard.name}</h3>
+                                        <h3 className="text-lg font-semibold text-foreground mb-2">{hazard.hazard_name}</h3>
                                         <StatusBadge variant={getRiskVariant(hazard.risk_level)}>
                                             {hazard.risk_level.toUpperCase()} RISK
                                         </StatusBadge>
