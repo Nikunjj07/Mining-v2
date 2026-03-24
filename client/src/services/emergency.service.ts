@@ -1,0 +1,75 @@
+// Emergency service - REST API implementation
+import apiClient from './api.client';
+import type { Emergency } from '../types/database.types';
+
+export interface EmergencyWithRelations extends Emergency {
+    reporter?: {
+        id: string;
+        full_name: string;
+        email: string;
+    };
+    assignee?: {
+        id: string;
+        full_name: string;
+        email: string;
+    };
+}
+
+export interface CreateEmergencyData {
+    type: Emergency['type'];
+    severity: Emergency['severity'];
+    location?: string;
+    description?: string;
+    latitude?: number;
+    longitude?: number;
+}
+
+export const createEmergency = async (emergencyData: CreateEmergencyData): Promise<Emergency> => {
+    const response = await apiClient.post('/emergencies', emergencyData);
+    return response.data.emergency;
+};
+
+export const getEmergencies = async (params?: {
+    severity?: Emergency['severity'];
+    status?: Emergency['status'];
+    page?: number;
+    limit?: number;
+}): Promise<{ emergencies: EmergencyWithRelations[]; total: number; pages: number }> => {
+    const response = await apiClient.get('/emergencies', { params });
+    return response.data;
+};
+
+export const getEmergencyById = async (emergencyId: string): Promise<EmergencyWithRelations> => {
+    const response = await apiClient.get(`/emergencies/${emergencyId}`);
+    return response.data.emergency;
+};
+
+export const updateEmergencyStatus = async (
+    emergencyId: string,
+    status: Emergency['status']
+): Promise<Emergency> => {
+    const response = await apiClient.patch(`/emergencies/${emergencyId}/status`, { status });
+    return response.data.emergency;
+};
+
+export const assignRescueTeam = async (emergencyId: string, userId: string): Promise<Emergency> => {
+    const response = await apiClient.patch(`/emergencies/${emergencyId}/assign`, { assigned_to: userId });
+    return response.data.emergency;
+};
+
+export const getAssignedEmergencies = async (): Promise<EmergencyWithRelations[]> => {
+    const response = await apiClient.get('/emergencies/assigned');
+    return response.data.emergencies;
+};
+
+export const updateEmergency = async (
+    emergencyId: string,
+    data: Partial<CreateEmergencyData & { status: Emergency['status'] }>
+): Promise<Emergency> => {
+    const response = await apiClient.put(`/emergencies/${emergencyId}`, data);
+    return response.data.emergency;
+};
+
+export const deleteEmergency = async (emergencyId: string): Promise<void> => {
+    await apiClient.delete(`/emergencies/${emergencyId}`);
+};
