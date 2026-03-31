@@ -47,15 +47,18 @@ export default function LiveMap() {
                 getAllActiveLocations()
             ]);
 
-            setEmergencies(emergencyData as Emergency[]);
-            setUserLocations(locationData);
+            const safeEmergencies = Array.isArray(emergencyData) ? (emergencyData as Emergency[]) : [];
+            const safeLocations = Array.isArray(locationData) ? locationData : [];
+
+            setEmergencies(safeEmergencies);
+            setUserLocations(safeLocations);
 
             // Center map on first emergency or user location (only on initial load)
             if (loading) {
-                if (emergencyData.length > 0 && emergencyData[0].latitude && emergencyData[0].longitude) {
-                    setMapCenter([emergencyData[0].latitude, emergencyData[0].longitude]);
-                } else if (locationData.length > 0) {
-                    setMapCenter([locationData[0].latitude, locationData[0].longitude]);
+                if (safeEmergencies.length > 0 && safeEmergencies[0].latitude && safeEmergencies[0].longitude) {
+                    setMapCenter([safeEmergencies[0].latitude, safeEmergencies[0].longitude]);
+                } else if (safeLocations.length > 0) {
+                    setMapCenter([safeLocations[0].latitude, safeLocations[0].longitude]);
                 }
             }
         } catch (err: any) {
@@ -109,7 +112,7 @@ export default function LiveMap() {
                     <div className="bg-card border border-border rounded-lg p-4">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 bg-red-500/10 rounded-lg flex items-center justify-center">
-                                <span className="text-2xl">🚨</span>
+                                <span className="text-2xl">!</span>
                             </div>
                             <div>
                                 <p className="text-2xl font-bold text-foreground">{emergencies.length}</p>
@@ -121,7 +124,7 @@ export default function LiveMap() {
                     <div className="bg-card border border-border rounded-lg p-4">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center">
-                                <span className="text-2xl">👥</span>
+                                <span className="text-2xl">@</span>
                             </div>
                             <div>
                                 <p className="text-2xl font-bold text-foreground">{userLocations.length}</p>
@@ -133,7 +136,7 @@ export default function LiveMap() {
                     <div className="bg-card border border-border rounded-lg p-4">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 bg-green-500/10 rounded-lg flex items-center justify-center">
-                                <span className="text-2xl">🔄</span>
+                                <span className="text-2xl">↻</span>
                             </div>
                             <div>
                                 <p className="text-sm font-medium text-foreground">Auto-refresh</p>
@@ -163,16 +166,16 @@ export default function LiveMap() {
                         />
 
                         {/* Emergency Markers */}
-                        {emergencies.map((emergency) => (
+                        {emergencies.map((emergency, index) => (
                             <Marker
-                                key={emergency.id}
+                                key={`emergency-${emergency.id ?? `${emergency.latitude}-${emergency.longitude}-${emergency.created_at}-${index}`}`}
                                 position={[emergency.latitude, emergency.longitude]}
                                 icon={getEmergencyIcon(emergency.severity)}
                             >
                                 <Popup>
                                     <div className="p-2 min-w-[200px]">
                                         <h3 className="font-semibold text-lg mb-2 flex items-center gap-2">
-                                            🚨 {emergency.type.replace(/_/g, ' ').toUpperCase()}
+                                            {emergency.type.replace(/_/g, ' ').toUpperCase()}
                                         </h3>
                                         <div className="space-y-1 text-sm">
                                             <p><strong>Severity:</strong> <span className={`capitalize ${emergency.severity === 'high' ? 'text-red-600' : emergency.severity === 'medium' ? 'text-orange-600' : 'text-yellow-600'}`}>{emergency.severity}</span></p>
@@ -193,9 +196,9 @@ export default function LiveMap() {
                         ))}
 
                         {/* User Location Markers */}
-                        {userLocations.map((location) => (
+                        {userLocations.map((location, index) => (
                             <Marker
-                                key={location.user_id}
+                                key={`user-${location.id ?? location.user_id ?? `${location.latitude}-${location.longitude}-${location.last_updated}-${index}`}`}
                                 position={[location.latitude, location.longitude]}
                                 icon={getUserIcon(location.user?.role || 'worker')}
                             >
@@ -227,7 +230,7 @@ export default function LiveMap() {
                 {/* Info Message */}
                 {userLocations.length === 0 && (
                     <div className="bg-blue-500/10 border border-blue-500 text-blue-700 dark:text-blue-300 px-4 py-3 rounded-md">
-                        <p className="font-medium">📍 Enable location tracking</p>
+                        <p className="font-medium">Enable location tracking</p>
                         <p className="text-sm mt-1">Grant location permission in your browser to appear on the map and help coordinate emergency response.</p>
                     </div>
                 )}

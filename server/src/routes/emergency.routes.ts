@@ -9,7 +9,6 @@ import {
 import { authenticate } from '../middleware/auth.middleware.js';
 import { requireRole } from '../middleware/role.middleware.js';
 import { validate } from '../middleware/validate.middleware.js';
-import { emergencyLimiter } from '../middleware/rateLimiter.middleware.js';
 import {
   createEmergencySchema,
   getEmergenciesQuerySchema,
@@ -22,10 +21,9 @@ const router = Router();
 // All emergency routes require authentication
 router.use(authenticate);
 
-// Create emergency (all authenticated users, with rate limiting)
+// Create emergency (all authenticated users)
 router.post(
   '/',
-  emergencyLimiter,
   validate(createEmergencySchema),
   createEmergency
 );

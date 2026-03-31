@@ -8,8 +8,6 @@ export default function LocationTracker() {
     const { user } = useAuth();
     const { location, error } = useGeolocation({
         enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 30000
     });
     const lastUpdateRef = useRef<{ lat: number; lng: number } | null>(null);
 

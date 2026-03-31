@@ -78,7 +78,7 @@ export const generateShiftReport = (shift: ShiftLog) => {
     if (shift.red_flag) {
         doc.setTextColor(220, 38, 38); // Red color
         doc.setFont('helvetica', 'bold');
-        doc.text('⚠ RED FLAG - CRITICAL ISSUES REPORTED', 20, yPosition);
+        doc.text('[!] RED FLAG - CRITICAL ISSUES REPORTED', 20, yPosition);
         doc.setTextColor(0, 0, 0); // Reset to black
         doc.setFont('helvetica', 'normal');
         yPosition += 8;
@@ -89,11 +89,11 @@ export const generateShiftReport = (shift: ShiftLog) => {
     // Acknowledged Status
     if (shift.acknowledged) {
         doc.setTextColor(34, 197, 94); // Green color
-        doc.text('✓ Acknowledged', 20, yPosition);
+        doc.text('[OK] Acknowledged', 20, yPosition);
         doc.setTextColor(0, 0, 0); // Reset to black
     } else {
         doc.setTextColor(234, 179, 8); // Yellow/Orange color
-        doc.text('⏳ Pending Acknowledgement', 20, yPosition);
+        doc.text('[PENDING] Pending Acknowledgement', 20, yPosition);
         doc.setTextColor(0, 0, 0); // Reset to black
     }
     yPosition += 10;
@@ -125,7 +125,7 @@ export const generateShiftReport = (shift: ShiftLog) => {
         doc.setFontSize(14);
         doc.setFont('helvetica', 'bold');
         doc.setTextColor(220, 38, 38); // Red color for safety issues
-        doc.text('⚠ Safety Issues', 20, yPosition);
+        doc.text('[!] Safety Issues', 20, yPosition);
         doc.setTextColor(0, 0, 0); // Reset to black
         yPosition += 8;
 

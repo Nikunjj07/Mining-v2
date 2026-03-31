@@ -59,4 +59,15 @@ shiftLogSchema.index({ acknowledged: 1 });
 shiftLogSchema.index({ created_at: -1 });
 shiftLogSchema.index({ red_flag: 1 });
 
+// Serialize _id as id, remove __v
+shiftLogSchema.set('toJSON', {
+  virtuals: true,
+  transform: (_doc, ret) => {
+    ret.id = (ret._id as mongoose.Types.ObjectId).toString();
+    Reflect.deleteProperty(ret, '_id');
+    Reflect.deleteProperty(ret, '__v');
+    return ret;
+  }
+});
+
 export const ShiftLog = mongoose.model<IShiftLog>('ShiftLog', shiftLogSchema);

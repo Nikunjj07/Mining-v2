@@ -48,7 +48,8 @@ export const updateUserLocation = async (
 
 export const getAllActiveLocations = async (): Promise<UserLocation[]> => {
     const response = await apiClient.get('/locations/active');
-    return response.data.personnel;
+    const personnel = response.data?.personnel;
+    return Array.isArray(personnel) ? personnel : [];
 };
 
 export const deactivateUserLocation = async (_userId?: string): Promise<void> => {

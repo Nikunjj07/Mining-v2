@@ -170,7 +170,7 @@ export default function HazardManage() {
                 {/* Success Message */}
                 {success && (
                     <div className="bg-primary/10 border border-primary text-primary px-4 py-3 rounded-md text-sm">
-                        ✓ {success}
+                        {success}
                     </div>
                 )}
 

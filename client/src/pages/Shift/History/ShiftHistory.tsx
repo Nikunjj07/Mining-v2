@@ -40,7 +40,8 @@ export default function ShiftHistory() {
         try {
             setLoading(true);
             const data = await getRecentShifts(20);
-            setShiftLogs(data as ShiftLog[]);
+            const safeShiftLogs = Array.isArray(data) ? (data as ShiftLog[]) : [];
+            setShiftLogs(safeShiftLogs);
         } catch (err: any) {
             setError(err.message || 'Failed to fetch shift logs');
             console.error(err);
@@ -75,9 +76,10 @@ export default function ShiftHistory() {
     };
 
     // Filter shift logs based on selected shift type
+    const safeShiftLogs = Array.isArray(shiftLogs) ? shiftLogs : [];
     const filteredShiftLogs = shiftFilter === 'all'
-        ? shiftLogs
-        : shiftLogs.filter(log => log.shift === shiftFilter);
+        ? safeShiftLogs
+        : safeShiftLogs.filter(log => log.shift === shiftFilter);
 
     if (loading) {
         return (
@@ -125,7 +127,7 @@ export default function ShiftHistory() {
                 {/* Success Message */}
                 {success && (
                     <div className="bg-primary/10 border border-primary text-primary px-4 py-3 rounded-md text-sm">
-                        ✓ {success}
+                        {success}
                     </div>
                 )}
 

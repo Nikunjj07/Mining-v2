@@ -11,8 +11,6 @@ const envSchema = z.object({
   JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters'),
   JWT_EXPIRES_IN: z.string().default('7d'),
   CORS_ORIGIN: z.string().default('http://localhost:5173'),
-  RATE_LIMIT_WINDOW_MS: z.string().default('900000').transform(Number),
-  RATE_LIMIT_MAX_REQUESTS: z.string().default('100').transform(Number),
   BCRYPT_SALT_ROUNDS: z.string().default('10').transform(Number),
 });
 
@@ -25,7 +23,7 @@ function validateEnv(): Env {
   } catch (error) {
     if (error instanceof z.ZodError) {
       const missingVars = error.errors.map(e => `${e.path.join('.')}: ${e.message}`);
-      console.error('❌ Invalid environment variables:', missingVars);
+      console.error('Invalid environment variables:', missingVars);
     }
     process.exit(1);
   }

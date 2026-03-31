@@ -31,6 +31,14 @@ export const createEmergency = async (emergencyData: CreateEmergencyData): Promi
     return response.data.emergency;
 };
 
+// Normalize MongoDB _id to id for client compatibility
+const normalize = <T extends { id?: string; _id?: string }>(item: T): T => {
+    if (!item.id && item._id) {
+        return { ...item, id: item._id };
+    }
+    return item;
+};
+
 export const getEmergencies = async (params?: {
     severity?: Emergency['severity'];
     status?: Emergency['status'];
@@ -38,7 +46,7 @@ export const getEmergencies = async (params?: {
     limit?: number;
 }): Promise<EmergencyWithRelations[]> => {
     const response = await apiClient.get('/emergencies', { params });
-    return response.data.emergencies;
+    return (response.data.emergencies as EmergencyWithRelations[]).map(normalize);
 };
 
 export const getEmergencyById = async (emergencyId: string): Promise<EmergencyWithRelations> => {
@@ -61,7 +69,7 @@ export const assignRescueTeam = async (emergencyId: string, userId: string): Pro
 
 export const getAssignedEmergencies = async (_userId?: string): Promise<EmergencyWithRelations[]> => {
     const response = await apiClient.get('/emergencies/assigned');
-    return response.data.emergencies;
+    return (response.data.emergencies as EmergencyWithRelations[]).map(normalize);
 };
 
 export const updateEmergency = async (

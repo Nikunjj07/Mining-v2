@@ -34,12 +34,12 @@ export default function EmergencyCard({
 }: EmergencyCardProps) {
     const getEmergencyTypeLabel = (type: string) => {
         const labels: Record<string, string> = {
-            gas_leak: '💨 Gas Leak',
-            fire: '🔥 Fire',
-            collapse: '🏗️ Structural Collapse',
-            equipment_failure: '⚙️ Equipment Failure',
-            worker_trapped: '🆘 Worker Trapped',
-            ventilation_failure: '🌬️ Ventilation Failure',
+            gas_leak: 'Gas Leak',
+            fire: 'Fire',
+            collapse: 'Structural Collapse',
+            equipment_failure: 'Equipment Failure',
+            worker_trapped: 'Worker Trapped',
+            ventilation_failure: 'Ventilation Failure',
         };
         return labels[type] || type;
     };
@@ -113,7 +113,7 @@ export default function EmergencyCard({
 
             {/* Location */}
             <div className="mb-3">
-                <h4 className="text-sm font-semibold text-foreground mb-1">📍 Location</h4>
+                <h4 className="text-sm font-semibold text-foreground mb-1">Location</h4>
                 <p className="text-sm text-muted-foreground">{emergency.location}</p>
             </div>
 

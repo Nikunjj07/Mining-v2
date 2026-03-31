@@ -114,19 +114,19 @@ export default function SupervisorDashboard() {
                     <DashboardCard
                         title="Shift Logs Today"
                         value={metrics.shiftsToday}
-                        icon="📋"
+                        icon="list"
                         variant="default"
                     />
                     <DashboardCard
                         title="Pending Acknowledgements"
                         value={metrics.pendingAcks}
-                        icon="⏳"
+                        icon="pending"
                         variant={metrics.pendingAcks > 0 ? 'warning' : 'success'}
                     />
                     <DashboardCard
                         title="Active Emergencies"
                         value={metrics.activeEmergencies}
-                        icon="🚨"
+                        icon="alert"
                         variant={metrics.activeEmergencies > 0 ? 'danger' : 'success'}
                     />
                 </div>

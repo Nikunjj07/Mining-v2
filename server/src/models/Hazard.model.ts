@@ -54,4 +54,15 @@ hazardSchema.index({ status: 1 });
 hazardSchema.index({ created_at: -1 });
 hazardSchema.index({ review_date: 1 });
 
+// Serialize _id as id, remove __v
+hazardSchema.set('toJSON', {
+  virtuals: true,
+  transform: (_doc, ret) => {
+    ret.id = (ret._id as mongoose.Types.ObjectId).toString();
+    Reflect.deleteProperty(ret, '_id');
+    Reflect.deleteProperty(ret, '__v');
+    return ret;
+  }
+});
+
 export const Hazard = mongoose.model<IHazard>('Hazard', hazardSchema);

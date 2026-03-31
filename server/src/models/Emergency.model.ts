@@ -72,4 +72,15 @@ emergencySchema.index({ assigned_to: 1 });
 emergencySchema.index({ created_at: -1 });
 emergencySchema.index({ type: 1 });
 
+// Serialize _id as id, remove __v
+emergencySchema.set('toJSON', {
+  virtuals: true,
+  transform: (_doc, ret) => {
+    ret.id = (ret._id as mongoose.Types.ObjectId).toString();
+    Reflect.deleteProperty(ret, '_id');
+    Reflect.deleteProperty(ret, '__v');
+    return ret;
+  }
+});
+
 export const Emergency = mongoose.model<IEmergency>('Emergency', emergencySchema);

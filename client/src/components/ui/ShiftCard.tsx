@@ -64,12 +64,12 @@ export default function ShiftCard({ shiftLog, onAcknowledge, onDownloadPDF, show
                     </StatusBadge>
                     {shiftLog.red_flag && (
                         <StatusBadge variant="danger">
-                            🚩 Red Flag
+                            Red Flag
                         </StatusBadge>
                     )}
                     {shiftLog.acknowledged && (
                         <StatusBadge variant="success">
-                            ✓ Acknowledged
+                            Acknowledged
                         </StatusBadge>
                     )}
                 </div>
@@ -130,7 +130,7 @@ export default function ShiftCard({ shiftLog, onAcknowledge, onDownloadPDF, show
                             onClick={() => onDownloadPDF(shiftLog)}
                             className="px-4 py-2 bg-accent text-accent-foreground rounded-md hover:opacity-90 transition-opacity text-sm flex items-center gap-2"
                         >
-                            📄 Download PDF
+                            Download PDF
                         </button>
                     )}
                 </div>

@@ -37,8 +37,6 @@ beforeAll(async () => {
   process.env.JWT_SECRET = 'test-secret-at-least-32-characters-long';
   process.env.JWT_EXPIRES_IN = '7d';
   process.env.CORS_ORIGIN = 'http://localhost:5173';
-  process.env.RATE_LIMIT_WINDOW_MS = '900000';
-  process.env.RATE_LIMIT_MAX_REQUESTS = '1000';
   process.env.BCRYPT_SALT_ROUNDS = '4';
 
   const { connectDatabase } = await import('../config/database.js');

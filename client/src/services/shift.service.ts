@@ -20,9 +20,18 @@ export interface CreateShiftLogData {
     next_shift_instructions?: string;
 }
 
+const getShiftLogFromResponse = (data: any): ShiftLogWithRelations | undefined => {
+    return data?.shift_log ?? data?.shiftLog;
+};
+
+const getShiftLogsFromResponse = (data: any): ShiftLogWithRelations[] => {
+    const shiftLogs = data?.shift_logs ?? data?.shiftLogs;
+    return Array.isArray(shiftLogs) ? shiftLogs : [];
+};
+
 export const createShiftLog = async (shiftData: CreateShiftLogData): Promise<ShiftLog> => {
     const response = await apiClient.post('/shifts', shiftData);
-    return response.data.shiftLog;
+    return getShiftLogFromResponse(response.data) as ShiftLog;
 };
 
 export const getShiftLogs = async (params?: {
@@ -32,7 +41,7 @@ export const getShiftLogs = async (params?: {
     limit?: number;
 }): Promise<ShiftLogWithRelations[]> => {
     const response = await apiClient.get('/shifts', { params });
-    return response.data.shift_logs;
+    return getShiftLogsFromResponse(response.data);
 };
 
 export const acknowledgeShift = async (shiftLogId: string, _userId?: string): Promise<void> => {
@@ -41,10 +50,10 @@ export const acknowledgeShift = async (shiftLogId: string, _userId?: string): Pr
 
 export const getRecentShifts = async (limit: number = 10): Promise<ShiftLogWithRelations[]> => {
     const response = await apiClient.get('/shifts/recent', { params: { limit } });
-    return response.data.shiftLogs;
+    return getShiftLogsFromResponse(response.data);
 };
 
 export const getShiftById = async (shiftId: string): Promise<ShiftLogWithRelations> => {
     const response = await apiClient.get(`/shifts/${shiftId}`);
-    return response.data.shiftLog;
+    return getShiftLogFromResponse(response.data) as ShiftLogWithRelations;
 };

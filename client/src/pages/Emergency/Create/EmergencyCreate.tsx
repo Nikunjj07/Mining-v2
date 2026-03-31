@@ -151,7 +151,7 @@ export default function EmergencyCreate() {
                         </select>
                         {severity === 'high' && (
                             <p className="text-xs text-destructive mt-2 font-semibold">
-                                ⚠️ HIGH SEVERITY - This will trigger immediate notifications to rescue teams
+                                WARNING: HIGH SEVERITY - This will trigger immediate notifications to rescue teams
                             </p>
                         )}
                     </div>
@@ -181,19 +181,19 @@ export default function EmergencyCreate() {
                                 className="w-4 h-4 text-primary bg-input border-border rounded focus:ring-primary"
                             />
                             <label htmlFor="useLocation" className="text-sm text-foreground cursor-pointer">
-                                📍 Use my current location
+                                Use my current location
                             </label>
                         </div>
 
                         {useCurrentLocation && geoLocation && (
                             <p className="text-xs text-green-600 dark:text-green-400 mt-2">
-                                ✓ Coordinates: {geoLocation.coords.latitude.toFixed(6)}, {geoLocation.coords.longitude.toFixed(6)}
+                                Coordinates: {geoLocation.coords.latitude.toFixed(6)}, {geoLocation.coords.longitude.toFixed(6)}
                             </p>
                         )}
 
                         {useCurrentLocation && geoError && (
                             <p className="text-xs text-destructive mt-2">
-                                ⚠️ {geoError}
+                                Error: {geoError}
                             </p>
                         )}
                     </div>
@@ -220,7 +220,7 @@ export default function EmergencyCreate() {
                     {/* Success Message */}
                     {success && (
                         <div className="bg-primary/10 border border-primary text-primary px-4 py-3 rounded-md text-sm">
-                            ✓ {success}
+                            {success}
                         </div>
                     )}
 
@@ -241,7 +241,7 @@ export default function EmergencyCreate() {
                                 : 'bg-primary text-primary-foreground hover:opacity-90'
                                 }`}
                         >
-                            {loading ? 'Reporting Emergency...' : severity === 'high' ? '🚨 Report Critical Emergency' : 'Report Emergency'}
+                            {loading ? 'Reporting Emergency...' : severity === 'high' ? 'Report Critical Emergency' : 'Report Emergency'}
                         </button>
                         <button
                             type="button"

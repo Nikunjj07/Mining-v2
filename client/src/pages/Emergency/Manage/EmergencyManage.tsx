@@ -6,6 +6,7 @@ import apiClient from '../../../services/api.client';
 
 interface Emergency {
     id: string;
+    _id?: string;  // MongoDB raw field fallback
     type: 'gas_leak' | 'fire' | 'collapse' | 'equipment_failure' | 'worker_trapped' | 'ventilation_failure';
     severity: 'low' | 'medium' | 'high';
     location: string;
@@ -54,7 +55,12 @@ export default function EmergencyManage() {
 
             // Fetch emergencies
             const emergencyResponse = await getEmergencies();
-            setEmergencies(emergencyResponse as Emergency[]);
+            // Normalize: ensure each emergency has an `id` (MongoDB may return _id)
+            const normalized = (emergencyResponse as any[]).map((e: any) => ({
+                ...e,
+                id: e.id || e._id,
+            }));
+            setEmergencies(normalized as Emergency[]);
 
             // Fetch rescue team members
             try {
@@ -97,6 +103,13 @@ export default function EmergencyManage() {
             if (!userId) {
                 setError('Please select a rescue team member');
                 setTimeout(() => setError(''), 3000);
+                return;
+            }
+
+            // Guard against missing emergency ID
+            if (!emergencyId || emergencyId === 'undefined') {
+                setError('Emergency ID is missing – please refresh the page and try again');
+                setTimeout(() => setError(''), 4000);
                 return;
             }
 
@@ -219,7 +232,7 @@ export default function EmergencyManage() {
                 {/* Success Message */}
                 {success && (
                     <div className="bg-primary/10 border border-primary text-primary px-4 py-3 rounded-md text-sm">
-                        ✓ {success}
+                        {success}
                     </div>
                 )}
 

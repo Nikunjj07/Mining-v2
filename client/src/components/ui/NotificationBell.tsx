@@ -74,13 +74,13 @@ export default function NotificationBell() {
         switch (type) {
             case 'emergency_created':
             case 'emergency_status_changed':
-                return '🚨';
+                return '!';
             case 'emergency_assigned':
-                return '👷';
+                return 'R';
             case 'shift_acknowledgment_required':
-                return '📋';
+                return 'S';
             default:
-                return '🔔';
+                return '*';
         }
     };
 

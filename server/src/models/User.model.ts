@@ -70,4 +70,16 @@ userSchema.methods.comparePassword = async function (candidatePassword: string):
   return bcrypt.compare(candidatePassword, this.password);
 };
 
+// Serialize _id as id, remove __v and password
+userSchema.set('toJSON', {
+  virtuals: true,
+  transform: (_doc, ret) => {
+    ret.id = (ret._id as mongoose.Types.ObjectId).toString();
+    Reflect.deleteProperty(ret, '_id');
+    Reflect.deleteProperty(ret, '__v');
+    Reflect.deleteProperty(ret, 'password');
+    return ret;
+  }
+});
+
 export const User = mongoose.model<IUser>('User', userSchema);

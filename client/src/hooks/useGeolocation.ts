@@ -42,9 +42,15 @@ export const useGeolocation = (options: UseGeolocationOptions = {}): UseGeolocat
 
         const defaultOptions: PositionOptions = {
             enableHighAccuracy: options.enableHighAccuracy ?? true,
-            timeout: options.timeout ?? 5000,
             maximumAge: options.maximumAge ?? 0
         };
+
+        // Do not force a timeout unless explicitly provided by caller.
+        // Browser default is Infinity, which avoids repeated timeout errors
+        // on slower GPS/location providers.
+        if (typeof options.timeout === 'number' && options.timeout > 0) {
+            defaultOptions.timeout = options.timeout;
+        }
 
         const handleSuccess = (position: GeolocationPosition) => {
             setLocation({

@@ -12,8 +12,8 @@ const startServer = async () => {
     await connectDatabase();
 
     app.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
-      console.log(`📊 Environment: ${env.NODE_ENV}`);
+      console.log(`Server running on http://localhost:${PORT}`);
+      console.log(`Environment: ${env.NODE_ENV}`);
     });
   } catch (error) {
     console.error('Failed to start server:', error);

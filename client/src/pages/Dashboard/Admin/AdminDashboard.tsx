@@ -125,37 +125,37 @@ export default function AdminDashboard() {
                     <DashboardCard
                         title="Shift Logs Today"
                         value={metrics.totalShiftsToday}
-                        icon="📋"
+                        icon="list"
                         variant="default"
                     />
                     <DashboardCard
                         title="Pending Acknowledgements"
                         value={metrics.pendingAcknowledgements}
-                        icon="⏳"
+                        icon="pending"
                         variant={metrics.pendingAcknowledgements > 0 ? 'warning' : 'success'}
                     />
                     <DashboardCard
                         title="Active Emergencies"
                         value={metrics.activeEmergencies}
-                        icon="🚨"
+                        icon="alert"
                         variant={metrics.activeEmergencies > 0 ? 'danger' : 'success'}
                     />
                     <DashboardCard
                         title="High Severity Emergencies"
                         value={metrics.highSeverityEmergencies}
-                        icon="⚠️"
+                        icon="warning"
                         variant={metrics.highSeverityEmergencies > 0 ? 'danger' : 'success'}
                     />
                     <DashboardCard
                         title="Total Hazards"
                         value={metrics.totalHazards}
-                        icon="⚠️"
+                        icon="hazard"
                         variant="default"
                     />
                     <DashboardCard
                         title="High Risk Hazards"
                         value={metrics.highRiskHazards}
-                        icon="🔴"
+                        icon="high-risk"
                         variant={metrics.highRiskHazards > 0 ? 'danger' : 'success'}
                     />
                 </div>

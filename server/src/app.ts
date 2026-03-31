@@ -4,7 +4,6 @@ import helmet from 'helmet';
 import { env } from './config/env.js';
 import { requestContext } from './middleware/requestContext.middleware.js';
 import { errorHandler } from './middleware/error.middleware.js';
-import { apiLimiter } from './middleware/rateLimiter.middleware.js';
 import authRoutes from './routes/auth.routes.js';
 import shiftRoutes from './routes/shift.routes.js';
 import emergencyRoutes from './routes/emergency.routes.js';
@@ -29,8 +28,6 @@ export const createApp = (): Express => {
   app.get('/health', (_req: Request, res: Response) => {
     res.json({ status: 'ok', message: 'Server is running' });
   });
-
-  app.use('/api', apiLimiter);
 
   app.use('/api/auth', authRoutes);
   app.use('/api/shifts', shiftRoutes);

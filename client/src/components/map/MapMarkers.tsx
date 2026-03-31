@@ -24,7 +24,7 @@ export const getEmergencyIcon = (severity: string) => {
                 justify-content: center;
                 font-size: 20px;
                 box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            ">🚨</div>
+            ">!</div>
         `,
         iconSize: [36, 36],
         iconAnchor: [18, 18],
@@ -34,10 +34,10 @@ export const getEmergencyIcon = (severity: string) => {
 
 export const getUserIcon = (role: string) => {
     const config = {
-        rescue: { emoji: '👷', color: '#3b82f6' },
-        admin: { emoji: '👨‍💼', color: '#8b5cf6' },
-        supervisor: { emoji: '👤', color: '#6b7280' },
-        worker: { emoji: '🔧', color: '#10b981' }
+        rescue: { emoji: 'R', color: '#3b82f6' },
+        admin: { emoji: 'A', color: '#8b5cf6' },
+        supervisor: { emoji: 'S', color: '#6b7280' },
+        worker: { emoji: 'W', color: '#10b981' }
     };
 
     const { emoji, color } = config[role as keyof typeof config] || config.supervisor;
